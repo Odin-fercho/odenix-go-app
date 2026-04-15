@@ -1,30 +1,58 @@
 {
   "expo": {
-    "name": "odenix-ecosystem",
-    "slug": "odenix-ecosystem",
+    "name": "Odenix Go",
+    "slug": "odenix-go",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "scheme": "odenixgo",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "description": "Experiencia cliente Odenix: catálogo y pedidos vía https://go.odenix.shop, datos en https://hub.odenix.shop.",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0b0410"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.odenix.go"
     },
     "android": {
+      "package": "com.odenix.go",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#0b0410"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png",
+      "name": "Odenix Go",
+      "shortName": "Odenix Go",
+      "lang": "es",
+      "description": "Tu menú y pedidos en vivo. Instala la app desde el navegador (PWA).",
+      "themeColor": "#2e1065",
+      "backgroundColor": "#0b0410",
+      "display": "standalone",
+      "orientation": "portrait",
+      "startUrl": "/",
+      "scope": "/"
+    },
+    "extra": {
+      "tenantSlug": "odenix_studio"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
+    "plugins": ["expo-router", "expo-font", "expo-updates"]
   }
 }
