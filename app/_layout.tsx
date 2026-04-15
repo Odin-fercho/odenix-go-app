@@ -68,6 +68,9 @@ function palette(scheme: ColorSchemeName) {
   return scheme === 'dark' ? dark : light;
 }
 
+/** Rutas con pestaña visible (evita pantallas colgadas por carpetas bajo `app/`). */
+const TAB_ROUTE_WHITELIST = new Set(['index', 'explore', 'profile']);
+
 function tabIconName(
   routeName: string,
   plantilla: TenantPlantilla,
@@ -189,18 +192,23 @@ function FloatingTabBar({
   const isDark = scheme === 'dark';
   const { tenant } = useTenant();
   const insets = useSafeAreaInsets();
-  const routes = state.routes;
+  const routes = state.routes.filter((r) => TAB_ROUTE_WHITELIST.has(r.name));
   const tabCount = routes.length;
+  const focusedRoute = state.routes[state.index];
+  const visibleFocusIndex = Math.max(
+    0,
+    routes.findIndex((r) => r.key === focusedRoute?.key),
+  );
 
   const barWidth = useSharedValue(
     Math.max(0, Dimensions.get('window').width - 40),
   );
   const slotWidth = useSharedValue(barWidth.value / Math.max(tabCount, 1));
-  const activeIndex = useSharedValue(state.index);
+  const activeIndex = useSharedValue(visibleFocusIndex);
 
   useEffect(() => {
-    activeIndex.value = withSpring(state.index, { damping: 17, stiffness: 210 });
-  }, [state.index, activeIndex]);
+    activeIndex.value = withSpring(visibleFocusIndex, { damping: 17, stiffness: 210 });
+  }, [visibleFocusIndex, activeIndex]);
 
   const indicatorStyle = useAnimatedStyle(() => {
     const w = slotWidth.value;
@@ -259,7 +267,7 @@ function FloatingTabBar({
               const label =
                 options.title ??
                 (typeof rawLabel === 'string' ? rawLabel : String(route.name));
-              const isFocused = state.index === index;
+              const isFocused = visibleFocusIndex === index;
 
               return (
                 <TabBarItem

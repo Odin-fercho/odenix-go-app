@@ -21,8 +21,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Hero3DScene } from './components/hero3d/Hero3DScene';
-import { HERO_HEIGHT } from './components/hero3d/constants';
+import { Hero3DScene } from '../src/components/hero3d/Hero3DScene';
+import { HERO_HEIGHT } from '../src/components/hero3d/constants';
 import { useTenant } from '../src/context/TenantContext';
 import { getBannersByTenant, type Banner } from '../src/services/baserow';
 import { postTenantInteractionEvent } from '../src/services/tenantEvents';
