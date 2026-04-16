@@ -11,6 +11,7 @@ import { ActivityIndicator, AppState, StyleSheet, Text, View } from 'react-nativ
 
 import { fallbackTenant, getTenantData, type Tenant } from '../services/baserow';
 import { APP_BACKGROUND, TEXT_PRIMARY } from '../../theme/appShell';
+import { ODENIX_PURPLE } from '../../theme/brand';
 
 type TenantContextValue = {
   tenant: Tenant;
@@ -56,7 +57,7 @@ export function TenantProvider({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <View style={styles.loaderWrap}>
-        <ActivityIndicator size="large" color={tenant.colorPrimario} />
+        <ActivityIndicator size="large" color={ODENIX_PURPLE} />
         <Text style={[styles.loaderTitle, { color: TEXT_PRIMARY }]}>
           Cargando tu experiencia...
         </Text>

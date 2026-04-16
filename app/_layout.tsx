@@ -34,16 +34,17 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { CartProvider } from '../src/context/CartContext';
 import { TenantProvider, useTenant } from '../src/context/TenantContext';
 import type { TenantPlantilla } from '../src/lib/tenantPlantilla';
+import { ODENIX_ACCENT_LIME, ODENIX_PURPLE, ODENIX_PURPLE_DEEP } from '../theme/brand';
 import { APP_BACKGROUND, TEXT_PRIMARY } from '../theme/appShell';
 import { fontFamily, useOdenixFonts } from '../theme/fonts';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
-/** Paleta Odenix (base de diseño; en multi-tenant vendrá de Baserow). */
+/** Shell de tabs (acentos alineados a `theme/brand`). */
 const brand = {
-  primary: '#9b5de5',
-  accent: '#a3e635',
-  surfaceDeep: '#2E1065',
+  primary: ODENIX_PURPLE,
+  accent: ODENIX_ACCENT_LIME,
+  surfaceDeep: ODENIX_PURPLE_DEEP,
 } as const;
 
 /** Barra de pestañas — fondo blanco, iconos gris / activo oscuro. */
@@ -200,10 +201,9 @@ function FloatingTabBar({
     routes.findIndex((r) => r.key === focusedRoute?.key),
   );
 
-  const barWidth = useSharedValue(
-    Math.max(0, Dimensions.get('window').width - 40),
-  );
-  const slotWidth = useSharedValue(barWidth.value / Math.max(tabCount, 1));
+  const initialBarWidth = Math.max(0, Dimensions.get('window').width - 40);
+  const barWidth = useSharedValue(initialBarWidth);
+  const slotWidth = useSharedValue(initialBarWidth / Math.max(tabCount, 1));
   const activeIndex = useSharedValue(visibleFocusIndex);
 
   useEffect(() => {

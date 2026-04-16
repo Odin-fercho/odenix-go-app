@@ -1,5 +1,6 @@
 import { finalizePublicMediaUrl } from '../config/mediaUrl';
 import { parseTenantPlantilla, type TenantPlantilla } from '../lib/tenantPlantilla';
+import { ODENIX_PURPLE, ODENIX_PURPLE_DEEP } from '../../theme/brand';
 import { getCurrentTenantSlug, portalFetch, type PortalFetchOptions } from './portalClient';
 
 export type Tenant = {
@@ -43,12 +44,13 @@ export type TenantProfile = {
   longitud: number | null;
 };
 
+/** Sin slug en URL o sin bootstrap: misma experiencia limpia que el simulador (marca Odenix). */
 const FALLBACK_TENANT: Tenant = {
   id: 0,
   nombre: 'Odenix',
-  slogan: 'Gestión inteligente para hacer crecer tu negocio hoy.',
-  colorPrimario: '#9b5de5',
-  colorSecundario: '#6366f1',
+  slogan: 'Preview limpio Odenix: hero, catálogo y tabs como en el simulador. Añade slug o env para tu marca.',
+  colorPrimario: ODENIX_PURPLE,
+  colorSecundario: ODENIX_PURPLE_DEEP,
   logoUrl: '',
   whatsapp: '573001234567',
   plantilla: 'catalogo',
