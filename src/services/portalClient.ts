@@ -30,13 +30,29 @@ export function getPortalBaseUrl(): string {
 }
 
 type ExtraShape = { tenantSlug?: string };
+const DEV_DEFAULT_TENANT_SLUG = 'odenix_studio';
+
+function readTenantSlugFromUrl(): string | null {
+  const locationSearch = (globalThis as { location?: { search?: string } }).location?.search;
+  if (!locationSearch || typeof URLSearchParams === 'undefined') return null;
+  const params = new URLSearchParams(locationSearch);
+  const fromQuery =
+    params.get('slug')?.trim() ??
+    params.get('tenant')?.trim() ??
+    params.get('tenantSlug')?.trim() ??
+    '';
+  return fromQuery || null;
+}
 
 export function getCurrentTenantSlug(): string | null {
+  const fromUrl = readTenantSlugFromUrl();
+  if (fromUrl) return fromUrl;
   const fromEnv = process.env.EXPO_PUBLIC_CURRENT_TENANT_SLUG?.trim();
   if (fromEnv) return fromEnv;
   const extra = Constants.expoConfig?.extra as ExtraShape | undefined;
   const fromExtra = extra?.tenantSlug?.trim();
   if (fromExtra) return fromExtra;
+  if (__DEV__) return DEV_DEFAULT_TENANT_SLUG;
   return null;
 }
 
