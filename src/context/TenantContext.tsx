@@ -10,7 +10,7 @@ import {
 import { ActivityIndicator, AppState, StyleSheet, Text, View } from 'react-native';
 
 import { fallbackTenant, getTenantData, type Tenant } from '../services/baserow';
-import { APP_BACKGROUND } from '../../theme/appShell';
+import { APP_BACKGROUND, TEXT_PRIMARY } from '../../theme/appShell';
 
 type TenantContextValue = {
   tenant: Tenant;
@@ -57,7 +57,7 @@ export function TenantProvider({ children }: { children: ReactNode }) {
     return (
       <View style={styles.loaderWrap}>
         <ActivityIndicator size="large" color={tenant.colorPrimario} />
-        <Text style={[styles.loaderTitle, { color: tenant.colorPrimario }]}>
+        <Text style={[styles.loaderTitle, { color: TEXT_PRIMARY }]}>
           Cargando tu experiencia...
         </Text>
       </View>

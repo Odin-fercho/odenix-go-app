@@ -1,4 +1,3 @@
-import { BlurView } from 'expo-blur';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -14,7 +13,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useTenant } from '../src/context/TenantContext';
 import { getTenantProfileBySlug, type TenantProfile } from '../src/services/baserow';
-import { APP_BACKGROUND } from '../theme/appShell';
+import { APP_BACKGROUND, CARD_BORDER, TEXT_PRIMARY, TEXT_SECONDARY } from '../theme/appShell';
 import { fontFamily, useOdenixFonts } from '../theme/fonts';
 
 const emptyProfile: TenantProfile = {
@@ -84,7 +83,7 @@ export default function ProfileScreen() {
         <Text
           style={[
             styles.title,
-            { color: '#F9FAFB' },
+            { color: TEXT_PRIMARY },
             font(fontFamily.headingExtraBold),
           ]}
         >
@@ -93,23 +92,14 @@ export default function ProfileScreen() {
         <Text
           style={[
             styles.subtitle,
-            { color: '#9CA3AF' },
+            { color: TEXT_SECONDARY },
             font(fontFamily.body),
           ]}
         >
           Información del local y vías de contacto.
         </Text>
 
-        <View style={styles.cardWrap}>
-          <BlurView intensity={44} tint="dark" style={styles.cardBlur} />
-          <View
-            style={[
-              styles.cardOverlay,
-              {
-                backgroundColor: 'rgba(46, 16, 101, 0.28)',
-              },
-            ]}
-          />
+        <View style={[styles.cardWrap, { backgroundColor: '#FFFFFF', borderColor: CARD_BORDER }]}>
           {loading ? (
             <View style={styles.loadingWrap}>
               <ActivityIndicator size="large" color={tenant.colorPrimario} />
@@ -117,29 +107,29 @@ export default function ProfileScreen() {
           ) : (
             <View style={styles.cardBody}>
               <Text
-                style={[styles.label, { color: '#D1D5DB' }, font(fontFamily.bodyMedium)]}
+                style={[styles.label, { color: TEXT_SECONDARY }, font(fontFamily.bodyMedium)]}
               >
                 Dirección
               </Text>
-              <Text style={[styles.value, { color: '#F9FAFB' }, font(fontFamily.body)]}>
+              <Text style={[styles.value, { color: TEXT_PRIMARY }, font(fontFamily.body)]}>
                 {profile.direccion || 'Pendiente de configuración'}
               </Text>
 
               <Text
-                style={[styles.label, { color: '#D1D5DB' }, font(fontFamily.bodyMedium)]}
+                style={[styles.label, { color: TEXT_SECONDARY }, font(fontFamily.bodyMedium)]}
               >
                 Horario
               </Text>
-              <Text style={[styles.value, { color: '#F9FAFB' }, font(fontFamily.body)]}>
+              <Text style={[styles.value, { color: TEXT_PRIMARY }, font(fontFamily.body)]}>
                 {profile.horario || 'Pendiente de configuración'}
               </Text>
 
               <Text
-                style={[styles.label, { color: '#D1D5DB' }, font(fontFamily.bodyMedium)]}
+                style={[styles.label, { color: TEXT_SECONDARY }, font(fontFamily.bodyMedium)]}
               >
                 Contacto
               </Text>
-              <Text style={[styles.value, { color: '#F9FAFB' }, font(fontFamily.body)]}>
+              <Text style={[styles.value, { color: TEXT_PRIMARY }, font(fontFamily.body)]}>
                 {profile.telefono || 'Sin teléfono'} {profile.email ? `· ${profile.email}` : ''}
               </Text>
             </View>
@@ -211,24 +201,17 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.14)',
     minHeight: 220,
     ...Platform.select({
       ios: {
         shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
       },
-      android: { elevation: 5 },
+      android: { elevation: 2 },
       default: {},
     }),
-  },
-  cardBlur: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  cardOverlay: {
-    ...StyleSheet.absoluteFillObject,
   },
   cardBody: {
     padding: 16,
@@ -269,7 +252,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     borderWidth: 1,
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: '#FFFFFF',
   },
   actionText: {
     color: '#FFFFFF',

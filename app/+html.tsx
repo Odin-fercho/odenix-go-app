@@ -14,13 +14,13 @@ export default function Root({ children }: PropsWithChildren) {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <meta name="color-scheme" content="dark" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="color-scheme" content="light" />
+        <meta name="theme-color" content="#FFFFFF" />
         <style
           dangerouslySetInnerHTML={{
             __html: `
-html,body{background:#000000;color-scheme:dark;margin:0;min-height:100%;}
-#root,body>div{background:#000000;min-height:100%;}
+html,body{background:#FFFFFF;color-scheme:light;margin:0;min-height:100%;color:#1A1A1A;}
+#root,body>div{background:#FFFFFF;min-height:100%;}
             `.trim(),
           }}
         />

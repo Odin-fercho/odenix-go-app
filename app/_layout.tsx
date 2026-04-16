@@ -3,12 +3,20 @@ import 'react-native-reanimated';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { BlurView } from 'expo-blur';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { DarkTheme, ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useRef } from 'react';
-import { Dimensions, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Appearance,
+  Dimensions,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -26,7 +34,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { CartProvider } from '../src/context/CartContext';
 import { TenantProvider, useTenant } from '../src/context/TenantContext';
 import type { TenantPlantilla } from '../src/lib/tenantPlantilla';
-import { APP_BACKGROUND } from '../theme/appShell';
+import { APP_BACKGROUND, TEXT_PRIMARY } from '../theme/appShell';
 import { fontFamily, useOdenixFonts } from '../theme/fonts';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -38,26 +46,26 @@ const brand = {
   surfaceDeep: '#2E1065',
 } as const;
 
-/** Tema fijo de la barra de pestañas (siempre oscuro; no seguir al sistema). */
+/** Barra de pestañas — fondo blanco, iconos gris / activo oscuro. */
 const shell = {
   bg: APP_BACKGROUND,
-  text: '#F9FAFB',
-  iconInactive: 'rgba(255, 255, 255, 0.42)',
-  tabActive: brand.accent,
-  glassOverlay: 'rgba(46, 16, 101, 0.22)',
-  tabBorder: 'rgba(255, 255, 255, 0.1)',
+  text: TEXT_PRIMARY,
+  iconInactive: '#6B7280',
+  tabActive: TEXT_PRIMARY,
+  glassOverlay: 'rgba(255, 255, 255, 0.92)',
+  tabBorder: '#EEEEEE',
 } as const;
 
-/** Tema React Navigation (web + nativo): fondo y superficies oscuras fijas. */
+/** Tema React Navigation — modo claro alineado al shell. */
 const navigationTheme = {
-  ...DarkTheme,
+  ...DefaultTheme,
   colors: {
-    ...DarkTheme.colors,
+    ...DefaultTheme.colors,
     primary: brand.primary,
     background: APP_BACKGROUND,
     card: APP_BACKGROUND,
-    text: shell.text,
-    border: 'rgba(255, 255, 255, 0.08)',
+    text: TEXT_PRIMARY,
+    border: '#EEEEEE',
     notification: brand.accent,
   },
 };
@@ -227,8 +235,8 @@ function FloatingTabBar({
         style={styles.tabBarIsland}
       >
         <BlurView
-          intensity={55}
-          tint="dark"
+          intensity={72}
+          tint="light"
           experimentalBlurMethod={
             Platform.OS === 'android' ? 'dimezisBlurView' : undefined
           }
@@ -285,6 +293,12 @@ function AppNavigationShell() {
   const splashDone = useRef(false);
 
   useEffect(() => {
+    if (Platform.OS !== 'web') {
+      Appearance.setColorScheme('light');
+    }
+  }, []);
+
+  useEffect(() => {
     const hide = () => {
       if (splashDone.current) return;
       splashDone.current = true;
@@ -323,7 +337,7 @@ function AppNavigationShell() {
   return (
     <SafeAreaProvider>
       <View style={[styles.root, { backgroundColor: APP_BACKGROUND }]}>
-        <StatusBar style="light" />
+        <StatusBar style="dark" />
         <Tabs
           screenOptions={{
             headerShown: false,
@@ -387,12 +401,12 @@ const styles = StyleSheet.create({
     borderColor: shell.tabBorder,
     ...Platform.select({
       ios: {
-        shadowColor: brand.accent,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.12,
-        shadowRadius: 16,
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
       },
-      android: { elevation: 8 },
+      android: { elevation: 6 },
       default: {},
     }),
   },
@@ -429,18 +443,18 @@ const styles = StyleSheet.create({
     bottom: 10,
     borderRadius: 18,
     borderWidth: 1,
-    backgroundColor: 'rgba(163, 230, 53, 0.22)',
-    borderColor: 'rgba(163, 230, 53, 0.55)',
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    borderColor: '#EEEEEE',
     ...Platform.select({
       ios: {
-        shadowColor: brand.accent,
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.75,
-        shadowRadius: 12,
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
       },
       android: {
-        elevation: 8,
-        shadowColor: brand.accent,
+        elevation: 2,
+        shadowColor: '#000000',
       },
       default: {},
     }),

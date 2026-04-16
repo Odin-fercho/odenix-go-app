@@ -1,11 +1,11 @@
-import { APP_BACKGROUND } from './appShell';
+import { APP_BACKGROUND, TEXT_PRIMARY, TEXT_SECONDARY } from './appShell';
 
-/** Paleta Odenix — unificada para Light/Dark (multi-tenant: sustituir por API más adelante). */
+/** Paleta modo claro (multi-tenant: sustituir por API más adelante). */
 export const light = {
-  background: '#F8F9FA',
+  background: APP_BACKGROUND,
   surface: '#FFFFFF',
-  textPrimary: '#111827',
-  textSecondary: '#6B7280',
+  textPrimary: TEXT_PRIMARY,
+  textSecondary: TEXT_SECONDARY,
   primary: '#9b5de5',
   secondaryDark: '#4c1d95',
   accentLime: '#a3e635',
@@ -13,7 +13,7 @@ export const light = {
 } as const;
 
 export const dark = {
-  background: APP_BACKGROUND,
+  background: '#0B0410',
   surface: 'rgba(46, 16, 101, 0.4)',
   textPrimary: '#F9FAFB',
   textSecondary: '#9CA3AF',
@@ -25,5 +25,5 @@ export const dark = {
 
 export type ThemeTokens = typeof light | typeof dark;
 
-/** Siempre oscuro: la app no sigue el modo claro del sistema (unificación web/simulador). */
-export const useThemeTokens = (): ThemeTokens => dark;
+/** App cliente en modo claro fijo. */
+export const useThemeTokens = (): ThemeTokens => light;

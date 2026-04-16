@@ -25,6 +25,7 @@ import { HERO_HEIGHT } from '../src/components/hero3d/constants';
 import { useTenant } from '../src/context/TenantContext';
 import { getBannersByTenant, type Banner } from '../src/services/baserow';
 import { postTenantInteractionEvent } from '../src/services/tenantEvents';
+import { CARD_BORDER } from '../theme/appShell';
 import { fontFamily, headingTracking, useOdenixFonts } from '../theme/fonts';
 import { useThemeTokens } from '../theme/tokens';
 
@@ -53,16 +54,7 @@ class HeroErrorBoundary extends Component<
 }
 
 function HeroFallback({ label }: { label: string }) {
-  const theme = useThemeTokens() || {
-    background: '#0B0410',
-    surface: 'rgba(46, 16, 101, 0.4)',
-    textPrimary: '#FFFFFF',
-    textSecondary: '#9CA3AF',
-    primary: '#9b5de5',
-    secondaryDark: '#4c1d95',
-    accentLime: '#a3e635',
-    accentOlive: '#65a30d',
-  };
+  const theme = useThemeTokens();
   return (
     <View
       style={[styles.heroFallback, { backgroundColor: theme.surface }]}
@@ -79,16 +71,7 @@ function HeroFallback({ label }: { label: string }) {
 }
 
 export default function HomeScreen() {
-  const theme = useThemeTokens() || {
-    background: '#0B0410',
-    surface: 'rgba(46, 16, 101, 0.4)',
-    textPrimary: '#FFFFFF',
-    textSecondary: '#9CA3AF',
-    primary: '#9b5de5',
-    secondaryDark: '#4c1d95',
-    accentLime: '#a3e635',
-    accentOlive: '#65a30d',
-  };
+  const theme = useThemeTokens();
   const { useCustomFonts } = useOdenixFonts();
   const insets = useSafeAreaInsets();
   const { tenant } = useTenant();
@@ -191,13 +174,13 @@ export default function HomeScreen() {
           style={[
             styles.heroCard,
             {
-              borderColor: 'rgba(255, 255, 255, 0.12)',
+              borderColor: CARD_BORDER,
             },
           ]}
         >
           <BlurView
-            intensity={48}
-            tint="dark"
+            intensity={40}
+            tint="light"
             experimentalBlurMethod={
               Platform.OS === 'android' ? 'dimezisBlurView' : undefined
             }
@@ -207,7 +190,7 @@ export default function HomeScreen() {
             style={[
               styles.heroTint,
               {
-                backgroundColor: 'rgba(46, 16, 101, 0.22)',
+                backgroundColor: 'rgba(255, 255, 255, 0.65)',
               },
             ]}
             pointerEvents="none"
@@ -282,12 +265,12 @@ export default function HomeScreen() {
 
         {tenant.plantilla === 'citas' ? (
           <View style={styles.citaCardWrap}>
-            <BlurView intensity={44} tint="dark" style={styles.citaBlur} />
+            <BlurView intensity={48} tint="light" style={styles.citaBlur} />
             <View
               style={[
                 styles.citaOverlay,
                 {
-                  backgroundColor: 'rgba(46, 16, 101, 0.28)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.92)',
                 },
               ]}
             />
@@ -314,12 +297,13 @@ export default function HomeScreen() {
                 value={citaNombre}
                 onChangeText={setCitaNombre}
                 placeholder="Tu nombre"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#6B7280"
                 style={[
                   styles.citaInput,
                   {
-                    borderColor: 'rgba(255,255,255,0.2)',
+                    borderColor: CARD_BORDER,
                     color: theme.textPrimary,
+                    backgroundColor: '#FFFFFF',
                   },
                 ]}
               />
@@ -327,12 +311,13 @@ export default function HomeScreen() {
                 value={citaServicio}
                 onChangeText={setCitaServicio}
                 placeholder="Servicio o motivo de la visita"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#6B7280"
                 style={[
                   styles.citaInput,
                   {
-                    borderColor: 'rgba(255,255,255,0.2)',
+                    borderColor: CARD_BORDER,
                     color: theme.textPrimary,
+                    backgroundColor: '#FFFFFF',
                   },
                 ]}
               />
@@ -340,14 +325,15 @@ export default function HomeScreen() {
                 value={citaPreferencia}
                 onChangeText={setCitaPreferencia}
                 placeholder="Preferencia (día/hora aproximados, en texto libre)"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#6B7280"
                 multiline
                 style={[
                   styles.citaInput,
                   styles.citaInputMultiline,
                   {
-                    borderColor: 'rgba(255,255,255,0.2)',
+                    borderColor: CARD_BORDER,
                     color: theme.textPrimary,
+                    backgroundColor: '#FFFFFF',
                   },
                 ]}
               />
@@ -390,12 +376,12 @@ export default function HomeScreen() {
           >
             {bannerItems.map((banner) => (
               <View key={banner.id} style={styles.bannerCardWrap}>
-                <BlurView intensity={45} tint="dark" style={styles.bannerBlur} />
+                <BlurView intensity={50} tint="light" style={styles.bannerBlur} />
                 <View
                   style={[
                     styles.bannerOverlay,
                     {
-                      backgroundColor: 'rgba(46, 16, 101, 0.24)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.88)',
                     },
                   ]}
                 />
@@ -468,12 +454,12 @@ const styles = StyleSheet.create({
     minHeight: HERO_HEIGHT,
     ...Platform.select({
       ios: {
-        shadowColor: '#9b5de5',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.18,
-        shadowRadius: 22,
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 14,
       },
-      android: { elevation: 10 },
+      android: { elevation: 4 },
       default: {},
     }),
   },
@@ -531,15 +517,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.14)',
+    borderColor: '#EEEEEE',
     ...Platform.select({
       ios: {
-        shadowColor: '#4c1d95',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.14,
-        shadowRadius: 16,
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
       },
-      android: { elevation: 6 },
+      android: { elevation: 3 },
       default: {},
     }),
   },
@@ -603,15 +589,15 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+    borderColor: '#EEEEEE',
     ...Platform.select({
       ios: {
-        shadowColor: '#4c1d95',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.18,
-        shadowRadius: 16,
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.07,
+        shadowRadius: 10,
       },
-      android: { elevation: 6 },
+      android: { elevation: 3 },
       default: {},
     }),
   },
@@ -628,7 +614,7 @@ const styles = StyleSheet.create({
   bannerImageFallback: {
     width: '100%',
     height: 130,
-    backgroundColor: 'rgba(155, 93, 229, 0.18)',
+    backgroundColor: '#F3F4F6',
   },
   bannerBody: {
     padding: 14,

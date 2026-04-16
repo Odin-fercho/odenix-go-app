@@ -18,13 +18,11 @@ import { useCart } from '../src/context/CartContext';
 import { useTenant } from '../src/context/TenantContext';
 import { getProductsByTenant, type Product } from '../src/services/baserow';
 import { postTenantInteractionEvent } from '../src/services/tenantEvents';
-import { APP_BACKGROUND } from '../theme/appShell';
+import { APP_BACKGROUND, CARD_BORDER, TEXT_PRIMARY, TEXT_SECONDARY } from '../theme/appShell';
 import { fontFamily, useOdenixFonts } from '../theme/fonts';
 
-const cardBorderColor = 'rgba(255, 255, 255, 0.16)';
-const cardOverlay = 'rgba(46, 16, 101, 0.26)';
-const textPrimary = '#F9FAFB';
-const textSecondary = '#D1D5DB';
+const textPrimary = TEXT_PRIMARY;
+const textSecondary = TEXT_SECONDARY;
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('es-CO', {
@@ -215,23 +213,11 @@ export default function ExploreScreen() {
               style={[
                 styles.card,
                 {
-                  borderColor: cardBorderColor,
+                  borderColor: CARD_BORDER,
+                  backgroundColor: '#FFFFFF',
                 },
               ]}
             >
-              <BlurView
-                intensity={44}
-                tint="dark"
-                experimentalBlurMethod={
-                  Platform.OS === 'android' ? 'dimezisBlurView' : undefined
-                }
-                style={styles.cardBlur}
-              />
-              <View
-                pointerEvents="none"
-                style={[styles.cardOverlay, { backgroundColor: cardOverlay }]}
-              />
-
               {item.imagenUrl ? (
                 <Image source={{ uri: item.imagenUrl }} style={styles.image} />
               ) : (
@@ -298,12 +284,12 @@ export default function ExploreScreen() {
       />
       {!isCitas && totalItems > 0 ? (
         <View style={[styles.cartBarWrap, { bottom: tabClearance }]}>
-          <BlurView intensity={48} tint="dark" style={styles.cartBarBlur} />
+          <BlurView intensity={64} tint="light" style={styles.cartBarBlur} />
           <View
             style={[
               styles.cartBarOverlay,
               {
-                backgroundColor: 'rgba(46, 16, 101, 0.3)',
+                backgroundColor: 'rgba(255, 255, 255, 0.94)',
               },
             ]}
           />
@@ -397,19 +383,13 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.35,
-        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
       },
-      android: { elevation: 5 },
+      android: { elevation: 2 },
       default: {},
     }),
-  },
-  cardBlur: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  cardOverlay: {
-    ...StyleSheet.absoluteFillObject,
   },
   image: {
     width: '100%',
@@ -420,7 +400,7 @@ const styles = StyleSheet.create({
     height: 180,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(31, 41, 55, 0.12)',
+    backgroundColor: '#F5F5F5',
   },
   imagePlaceholderText: {
     fontSize: 14,
@@ -477,15 +457,15 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.16)',
+    borderColor: '#EEEEEE',
     ...Platform.select({
       ios: {
         shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.28,
-        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
       },
-      android: { elevation: 4 },
+      android: { elevation: 3 },
       default: {},
     }),
   },
@@ -521,10 +501,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    backgroundColor: 'rgba(107, 114, 128, 0.24)',
+    backgroundColor: '#F0F0F0',
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
   },
   cartClearText: {
-    color: '#FFFFFF',
+    color: TEXT_PRIMARY,
     fontSize: 12,
     fontWeight: '600',
   },
