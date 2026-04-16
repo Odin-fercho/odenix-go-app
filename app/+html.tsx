@@ -14,7 +14,13 @@ export default function Root({ children }: PropsWithChildren) {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <meta name="theme-color" content="#2e1065" />
+        <meta name="color-scheme" content="dark" />
+        <meta name="theme-color" content="#000000" />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `html,body{background:#000000;color-scheme:dark;}body{margin:0;}`,
+          }}
+        />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="application-name" content="Odenix Go" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

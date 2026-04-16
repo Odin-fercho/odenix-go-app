@@ -10,6 +10,7 @@ import {
 import { ActivityIndicator, AppState, StyleSheet, Text, View } from 'react-native';
 
 import { fallbackTenant, getTenantData, type Tenant } from '../services/baserow';
+import { APP_BACKGROUND } from '../../theme/appShell';
 
 type TenantContextValue = {
   tenant: Tenant;
@@ -77,7 +78,7 @@ export function useTenant(): TenantContextValue {
 const styles = StyleSheet.create({
   loaderWrap: {
     flex: 1,
-    backgroundColor: '#0B0410',
+    backgroundColor: APP_BACKGROUND,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 14,

@@ -8,13 +8,12 @@ import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useRef } from 'react';
 import {
-  ColorSchemeName,
+  Appearance,
   Dimensions,
   Platform,
   Pressable,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
 import Animated, {
@@ -34,7 +33,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { CartProvider } from '../src/context/CartContext';
 import { TenantProvider, useTenant } from '../src/context/TenantContext';
 import type { TenantPlantilla } from '../src/lib/tenantPlantilla';
-import { fontFamily } from '../theme/fonts';
+import { APP_BACKGROUND } from '../theme/appShell';
+import { fontFamily, useOdenixFonts } from '../theme/fonts';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -45,28 +45,15 @@ const brand = {
   surfaceDeep: '#2E1065',
 } as const;
 
-const light = {
-  bg: '#F8F9FA',
-  text: '#111827',
-  iconInactive: '#6B7280',
-  tabActive: brand.primary,
-  glassOverlay: 'rgba(255, 255, 255, 0.78)',
-  tabBorder: 'rgba(76, 29, 149, 0.08)',
-  shadow: '#4c1d95',
-} as const;
-
-const dark = {
-  bg: '#0B0410',
+/** Tema fijo de la barra de pestañas (siempre oscuro; no seguir al sistema). */
+const shell = {
+  bg: APP_BACKGROUND,
   text: '#F9FAFB',
   iconInactive: 'rgba(255, 255, 255, 0.42)',
   tabActive: brand.accent,
-  glassOverlay: 'rgba(46, 16, 101, 0.18)',
+  glassOverlay: 'rgba(46, 16, 101, 0.22)',
   tabBorder: 'rgba(255, 255, 255, 0.1)',
 } as const;
-
-function palette(scheme: ColorSchemeName) {
-  return scheme === 'dark' ? dark : light;
-}
 
 /** Rutas con pestaña visible (evita pantallas colgadas por carpetas bajo `app/`). */
 const TAB_ROUTE_WHITELIST = new Set(['index', 'explore', 'profile']);
@@ -187,9 +174,7 @@ function FloatingTabBar({
   navigation,
   useCustomFonts,
 }: FloatingTabBarProps) {
-  const scheme = useColorScheme();
-  const t = palette(scheme);
-  const isDark = scheme === 'dark';
+  const t = shell;
   const { tenant } = useTenant();
   const insets = useSafeAreaInsets();
   const routes = state.routes.filter((r) => TAB_ROUTE_WHITELIST.has(r.name));
@@ -220,7 +205,6 @@ function FloatingTabBar({
   });
 
   const bottomPad = Math.max(insets.bottom, 10);
-  const blurTint: 'dark' | 'light' = isDark ? 'dark' : 'light';
 
   return (
     <View
@@ -233,14 +217,11 @@ function FloatingTabBar({
           barWidth.value = w;
           slotWidth.value = w / Math.max(tabCount, 1);
         }}
-        style={[
-          styles.tabBarIsland,
-          isDark ? styles.tabBarIslandDark : styles.tabBarIslandLight,
-        ]}
+        style={styles.tabBarIsland}
       >
         <BlurView
-          intensity={isDark ? 55 : 45}
-          tint={blurTint}
+          intensity={55}
+          tint="dark"
           experimentalBlurMethod={
             Platform.OS === 'android' ? 'dimezisBlurView' : undefined
           }
@@ -253,11 +234,7 @@ function FloatingTabBar({
 
         <View style={styles.tabBarContent}>
           <Animated.View
-            style={[
-              styles.indicatorPill,
-              isDark ? styles.indicatorPillDark : styles.indicatorPillLight,
-              indicatorStyle,
-            ]}
+            style={[styles.indicatorPill, indicatorStyle]}
             renderToHardwareTextureAndroid
           />
           <View style={styles.tabRow}>
@@ -296,12 +273,13 @@ function FloatingTabBar({
 const SPLASH_MAX_MS = 2500;
 
 function AppNavigationShell() {
-  const scheme = useColorScheme();
-  const t = palette(scheme);
   const { tenant } = useTenant();
-  // Temporal: forzar fallback a tipografía del sistema para desbloquear render.
-  const useCustomFonts = false;
+  const { useCustomFonts, loaded: fontsLoaded } = useOdenixFonts();
   const splashDone = useRef(false);
+
+  useEffect(() => {
+    Appearance.setColorScheme('dark');
+  }, []);
 
   useEffect(() => {
     const hide = () => {
@@ -310,10 +288,10 @@ function AppNavigationShell() {
       SplashScreen.hideAsync().catch(() => {});
     };
 
-    hide();
+    if (fontsLoaded) hide();
     const id = setTimeout(hide, SPLASH_MAX_MS);
     return () => clearTimeout(id);
-  }, []);
+  }, [fontsLoaded]);
 
   useEffect(() => {
     if (__DEV__) return;
@@ -336,12 +314,12 @@ function AppNavigationShell() {
 
   return (
     <SafeAreaProvider>
-      <View style={[styles.root, { backgroundColor: t.bg }]}>
-        <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <View style={[styles.root, { backgroundColor: APP_BACKGROUND }]}>
+        <StatusBar style="light" />
         <Tabs
           screenOptions={{
             headerShown: false,
-            sceneStyle: { backgroundColor: t.bg },
+            sceneStyle: { backgroundColor: APP_BACKGROUND },
             tabBarStyle: {
               position: 'absolute',
               backgroundColor: 'transparent',
@@ -364,7 +342,9 @@ function AppNavigationShell() {
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={styles.gestureRoot}>
+    <GestureHandlerRootView
+      style={[styles.gestureRoot, { backgroundColor: APP_BACKGROUND }]}
+    >
       <TenantProvider>
         <CartProvider>
           <AppNavigationShell />
@@ -394,9 +374,7 @@ const styles = StyleSheet.create({
     minHeight: 70,
     justifyContent: 'center',
     borderWidth: 1,
-  },
-  tabBarIslandDark: {
-    borderColor: dark.tabBorder,
+    borderColor: shell.tabBorder,
     ...Platform.select({
       ios: {
         shadowColor: brand.accent,
@@ -405,19 +383,6 @@ const styles = StyleSheet.create({
         shadowRadius: 16,
       },
       android: { elevation: 8 },
-      default: {},
-    }),
-  },
-  tabBarIslandLight: {
-    borderColor: light.tabBorder,
-    ...Platform.select({
-      ios: {
-        shadowColor: light.shadow,
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.12,
-        shadowRadius: 28,
-      },
-      android: { elevation: 14 },
       default: {},
     }),
   },
@@ -454,8 +419,6 @@ const styles = StyleSheet.create({
     bottom: 10,
     borderRadius: 18,
     borderWidth: 1,
-  },
-  indicatorPillDark: {
     backgroundColor: 'rgba(163, 230, 53, 0.22)',
     borderColor: 'rgba(163, 230, 53, 0.55)',
     ...Platform.select({
@@ -468,23 +431,6 @@ const styles = StyleSheet.create({
       android: {
         elevation: 8,
         shadowColor: brand.accent,
-      },
-      default: {},
-    }),
-  },
-  indicatorPillLight: {
-    backgroundColor: 'rgba(155, 93, 229, 0.2)',
-    borderColor: 'rgba(155, 93, 229, 0.45)',
-    ...Platform.select({
-      ios: {
-        shadowColor: brand.primary,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.45,
-        shadowRadius: 14,
-      },
-      android: {
-        elevation: 6,
-        shadowColor: brand.primary,
       },
       default: {},
     }),

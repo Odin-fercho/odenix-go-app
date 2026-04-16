@@ -8,15 +8,14 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTenant } from '../src/context/TenantContext';
 import { getTenantProfileBySlug, type TenantProfile } from '../src/services/baserow';
-
-const bgLight = '#F8F9FA';
-const bgDark = '#0B0410';
+import { APP_BACKGROUND } from '../theme/appShell';
+import { fontFamily, useOdenixFonts } from '../theme/fonts';
 
 const emptyProfile: TenantProfile = {
   direccion: '',
@@ -29,8 +28,8 @@ const emptyProfile: TenantProfile = {
 };
 
 export default function ProfileScreen() {
-  const scheme = useColorScheme();
-  const isDark = scheme === 'dark';
+  const insets = useSafeAreaInsets();
+  const { useCustomFonts } = useOdenixFonts();
   const { tenant } = useTenant();
   const [profile, setProfile] = useState<TenantProfile>(emptyProfile);
   const [loading, setLoading] = useState(true);
@@ -44,6 +43,11 @@ export default function ProfileScreen() {
     };
     void loadProfile();
   }, []);
+
+  const font = (family: string | undefined) =>
+    useCustomFonts && family ? { fontFamily: family } : {};
+
+  const tabClearance = 92 + Math.max(insets.bottom, 10);
 
   const openMap = async () => {
     const label = `${tenant.nombre} ${profile.direccion}`.trim();
@@ -69,28 +73,40 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: isDark ? bgDark : bgLight }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={[styles.title, { color: isDark ? '#F9FAFB' : '#111827' }]}>
+    <SafeAreaView
+      style={[styles.safe, { backgroundColor: APP_BACKGROUND }]}
+      edges={['top', 'left', 'right']}
+    >
+      <View style={[styles.screen, { backgroundColor: APP_BACKGROUND }]}>
+      <ScrollView
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabClearance + 36 }]}
+      >
+        <Text
+          style={[
+            styles.title,
+            { color: '#F9FAFB' },
+            font(fontFamily.headingExtraBold),
+          ]}
+        >
           Perfil de {tenant.nombre}
         </Text>
-        <Text style={[styles.subtitle, { color: isDark ? '#9CA3AF' : '#6B7280' }]}>
+        <Text
+          style={[
+            styles.subtitle,
+            { color: '#9CA3AF' },
+            font(fontFamily.body),
+          ]}
+        >
           Información del local y vías de contacto.
         </Text>
 
         <View style={styles.cardWrap}>
-          <BlurView
-            intensity={isDark ? 44 : 30}
-            tint={isDark ? 'dark' : 'light'}
-            style={styles.cardBlur}
-          />
+          <BlurView intensity={44} tint="dark" style={styles.cardBlur} />
           <View
             style={[
               styles.cardOverlay,
               {
-                backgroundColor: isDark
-                  ? 'rgba(46, 16, 101, 0.28)'
-                  : 'rgba(255, 255, 255, 0.62)',
+                backgroundColor: 'rgba(46, 16, 101, 0.28)',
               },
             ]}
           />
@@ -100,24 +116,30 @@ export default function ProfileScreen() {
             </View>
           ) : (
             <View style={styles.cardBody}>
-              <Text style={[styles.label, { color: isDark ? '#D1D5DB' : '#374151' }]}>
+              <Text
+                style={[styles.label, { color: '#D1D5DB' }, font(fontFamily.bodyMedium)]}
+              >
                 Dirección
               </Text>
-              <Text style={[styles.value, { color: isDark ? '#F9FAFB' : '#111827' }]}>
+              <Text style={[styles.value, { color: '#F9FAFB' }, font(fontFamily.body)]}>
                 {profile.direccion || 'Pendiente de configuración'}
               </Text>
 
-              <Text style={[styles.label, { color: isDark ? '#D1D5DB' : '#374151' }]}>
+              <Text
+                style={[styles.label, { color: '#D1D5DB' }, font(fontFamily.bodyMedium)]}
+              >
                 Horario
               </Text>
-              <Text style={[styles.value, { color: isDark ? '#F9FAFB' : '#111827' }]}>
+              <Text style={[styles.value, { color: '#F9FAFB' }, font(fontFamily.body)]}>
                 {profile.horario || 'Pendiente de configuración'}
               </Text>
 
-              <Text style={[styles.label, { color: isDark ? '#D1D5DB' : '#374151' }]}>
+              <Text
+                style={[styles.label, { color: '#D1D5DB' }, font(fontFamily.bodyMedium)]}
+              >
                 Contacto
               </Text>
-              <Text style={[styles.value, { color: isDark ? '#F9FAFB' : '#111827' }]}>
+              <Text style={[styles.value, { color: '#F9FAFB' }, font(fontFamily.body)]}>
                 {profile.telefono || 'Sin teléfono'} {profile.email ? `· ${profile.email}` : ''}
               </Text>
             </View>
@@ -134,7 +156,7 @@ export default function ProfileScreen() {
               { backgroundColor: tenant.colorPrimario, opacity: pressed ? 0.85 : 1 },
             ]}
           >
-            <Text style={styles.actionText}>Ver mapa</Text>
+            <Text style={[styles.actionText, font(fontFamily.bodyMedium)]}>Ver mapa</Text>
           </Pressable>
           <Pressable
             onPress={() => {
@@ -148,25 +170,33 @@ export default function ProfileScreen() {
               },
             ]}
           >
-            <Text style={[styles.actionTextGhost, { color: tenant.colorPrimario }]}>
+            <Text
+              style={[
+                styles.actionTextGhost,
+                { color: tenant.colorPrimario },
+                font(fontFamily.bodyMedium),
+              ]}
+            >
               Contactar
             </Text>
           </Pressable>
         </View>
       </ScrollView>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+  },
   screen: {
     flex: 1,
-    paddingBottom: 120,
   },
   scrollContent: {
     paddingHorizontal: 20,
     paddingTop: 12,
-    paddingBottom: 130,
     gap: 14,
   },
   title: {
@@ -178,11 +208,21 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   cardWrap: {
-    borderRadius: 20,
+    borderRadius: 15,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.14)',
     minHeight: 220,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 10,
+      },
+      android: { elevation: 5 },
+      default: {},
+    }),
   },
   cardBlur: {
     ...StyleSheet.absoluteFillObject,

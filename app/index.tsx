@@ -16,10 +16,9 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  useColorScheme,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Hero3DScene } from '../src/components/hero3d/Hero3DScene';
 import { HERO_HEIGHT } from '../src/components/hero3d/constants';
@@ -90,9 +89,8 @@ export default function HomeScreen() {
     accentLime: '#a3e635',
     accentOlive: '#65a30d',
   };
-  const scheme = useColorScheme();
-  const isDark = scheme === 'dark';
   const { useCustomFonts } = useOdenixFonts();
+  const insets = useSafeAreaInsets();
   const { tenant } = useTenant();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [citaNombre, setCitaNombre] = useState('');
@@ -183,22 +181,23 @@ export default function HomeScreen() {
       edges={['top', 'left', 'right']}
     >
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: 120 + Math.max(insets.bottom, 8) },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <View
           style={[
             styles.heroCard,
             {
-              borderColor: isDark
-                ? 'rgba(255, 255, 255, 0.12)'
-                : 'rgba(76, 29, 149, 0.1)',
+              borderColor: 'rgba(255, 255, 255, 0.12)',
             },
           ]}
         >
           <BlurView
-            intensity={isDark ? 48 : 36}
-            tint={isDark ? 'dark' : 'light'}
+            intensity={48}
+            tint="dark"
             experimentalBlurMethod={
               Platform.OS === 'android' ? 'dimezisBlurView' : undefined
             }
@@ -208,9 +207,7 @@ export default function HomeScreen() {
             style={[
               styles.heroTint,
               {
-                backgroundColor: isDark
-                  ? 'rgba(46, 16, 101, 0.22)'
-                  : 'rgba(255, 255, 255, 0.45)',
+                backgroundColor: 'rgba(46, 16, 101, 0.22)',
               },
             ]}
             pointerEvents="none"
@@ -285,18 +282,12 @@ export default function HomeScreen() {
 
         {tenant.plantilla === 'citas' ? (
           <View style={styles.citaCardWrap}>
-            <BlurView
-              intensity={isDark ? 44 : 32}
-              tint={isDark ? 'dark' : 'light'}
-              style={styles.citaBlur}
-            />
+            <BlurView intensity={44} tint="dark" style={styles.citaBlur} />
             <View
               style={[
                 styles.citaOverlay,
                 {
-                  backgroundColor: isDark
-                    ? 'rgba(46, 16, 101, 0.28)'
-                    : 'rgba(255, 255, 255, 0.58)',
+                  backgroundColor: 'rgba(46, 16, 101, 0.28)',
                 },
               ]}
             />
@@ -323,11 +314,11 @@ export default function HomeScreen() {
                 value={citaNombre}
                 onChangeText={setCitaNombre}
                 placeholder="Tu nombre"
-                placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
+                placeholderTextColor="#9CA3AF"
                 style={[
                   styles.citaInput,
                   {
-                    borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(76,29,149,0.2)',
+                    borderColor: 'rgba(255,255,255,0.2)',
                     color: theme.textPrimary,
                   },
                 ]}
@@ -336,11 +327,11 @@ export default function HomeScreen() {
                 value={citaServicio}
                 onChangeText={setCitaServicio}
                 placeholder="Servicio o motivo de la visita"
-                placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
+                placeholderTextColor="#9CA3AF"
                 style={[
                   styles.citaInput,
                   {
-                    borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(76,29,149,0.2)',
+                    borderColor: 'rgba(255,255,255,0.2)',
                     color: theme.textPrimary,
                   },
                 ]}
@@ -349,13 +340,13 @@ export default function HomeScreen() {
                 value={citaPreferencia}
                 onChangeText={setCitaPreferencia}
                 placeholder="Preferencia (día/hora aproximados, en texto libre)"
-                placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
+                placeholderTextColor="#9CA3AF"
                 multiline
                 style={[
                   styles.citaInput,
                   styles.citaInputMultiline,
                   {
-                    borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(76,29,149,0.2)',
+                    borderColor: 'rgba(255,255,255,0.2)',
                     color: theme.textPrimary,
                   },
                 ]}
@@ -399,18 +390,12 @@ export default function HomeScreen() {
           >
             {bannerItems.map((banner) => (
               <View key={banner.id} style={styles.bannerCardWrap}>
-                <BlurView
-                  intensity={isDark ? 45 : 32}
-                  tint={isDark ? 'dark' : 'light'}
-                  style={styles.bannerBlur}
-                />
+                <BlurView intensity={45} tint="dark" style={styles.bannerBlur} />
                 <View
                   style={[
                     styles.bannerOverlay,
                     {
-                      backgroundColor: isDark
-                        ? 'rgba(46, 16, 101, 0.24)'
-                        : 'rgba(255, 255, 255, 0.56)',
+                      backgroundColor: 'rgba(46, 16, 101, 0.24)',
                     },
                   ]}
                 />
@@ -472,7 +457,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingBottom: 120,
     paddingTop: 8,
     gap: 20,
   },

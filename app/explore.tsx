@@ -10,17 +10,21 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useCart } from '../src/context/CartContext';
 import { useTenant } from '../src/context/TenantContext';
 import { getProductsByTenant, type Product } from '../src/services/baserow';
 import { postTenantInteractionEvent } from '../src/services/tenantEvents';
+import { APP_BACKGROUND } from '../theme/appShell';
+import { fontFamily, useOdenixFonts } from '../theme/fonts';
 
-const bgLight = '#F8F9FA';
-const bgDark = '#0B0410';
+const cardBorderColor = 'rgba(255, 255, 255, 0.16)';
+const cardOverlay = 'rgba(46, 16, 101, 0.26)';
+const textPrimary = '#F9FAFB';
+const textSecondary = '#D1D5DB';
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('es-CO', {
@@ -31,8 +35,8 @@ function formatCurrency(value: number): string {
 }
 
 export default function ExploreScreen() {
-  const scheme = useColorScheme();
-  const isDark = scheme === 'dark';
+  const insets = useSafeAreaInsets();
+  const { useCustomFonts } = useOdenixFonts();
   const { tenant } = useTenant();
   const isCitas = tenant.plantilla === 'citas';
   const {
@@ -49,14 +53,10 @@ export default function ExploreScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const cardBorderColor = isDark
-    ? 'rgba(255, 255, 255, 0.16)'
-    : 'rgba(76, 29, 149, 0.14)';
-  const cardOverlay = isDark
-    ? 'rgba(46, 16, 101, 0.26)'
-    : 'rgba(255, 255, 255, 0.58)';
-  const textPrimary = isDark ? '#F9FAFB' : '#111827';
-  const textSecondary = isDark ? '#D1D5DB' : '#4B5563';
+  const font = (family: string | undefined) =>
+    useCustomFonts && family ? { fontFamily: family } : {};
+
+  const tabClearance = 92 + Math.max(insets.bottom, 10);
 
   const loadProducts = async (isPullToRefresh = false) => {
     if (isPullToRefresh) {
@@ -150,16 +150,18 @@ export default function ExploreScreen() {
   };
 
   return (
-    <View
-      style={[
-        styles.screen,
-        { backgroundColor: isDark ? bgDark : bgLight },
-      ]}
+    <SafeAreaView
+      style={[styles.safe, { backgroundColor: APP_BACKGROUND }]}
+      edges={['top', 'left', 'right']}
     >
+      <View style={[styles.screen, { backgroundColor: APP_BACKGROUND }]}>
       <FlatList
         data={products}
         keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: tabClearance + 48 },
+        ]}
         showsVerticalScrollIndicator={false}
         onRefresh={() => {
           void loadProducts(true);
@@ -167,10 +169,22 @@ export default function ExploreScreen() {
         refreshing={refreshing}
         ListHeaderComponent={
           <View style={styles.headerWrap}>
-            <Text style={[styles.title, { color: textPrimary }]}>
+            <Text
+              style={[
+                styles.title,
+                { color: textPrimary },
+                font(fontFamily.headingExtraBold),
+              ]}
+            >
               {isCitas ? 'Agendar' : 'Explorar'}
             </Text>
-            <Text style={[styles.subtitle, { color: textSecondary }]}>
+            <Text
+              style={[
+                styles.subtitle,
+                { color: textSecondary },
+                font(fontFamily.body),
+              ]}
+            >
               {isCitas
                 ? `Servicios y solicitudes en vivo · ${tenant.nombre}`
                 : `Catálogo en vivo de ${tenant.nombre}`}
@@ -182,7 +196,9 @@ export default function ExploreScreen() {
             {loading ? (
               <ActivityIndicator size="large" color={tenant.colorPrimario} />
             ) : null}
-            <Text style={[styles.emptyText, { color: textSecondary }]}>
+            <Text
+              style={[styles.emptyText, { color: textSecondary }, font(fontFamily.body)]}
+            >
               {emptyMessage}
             </Text>
           </View>
@@ -204,8 +220,8 @@ export default function ExploreScreen() {
               ]}
             >
               <BlurView
-                intensity={isDark ? 44 : 30}
-                tint={isDark ? 'dark' : 'light'}
+                intensity={44}
+                tint="dark"
                 experimentalBlurMethod={
                   Platform.OS === 'android' ? 'dimezisBlurView' : undefined
                 }
@@ -220,19 +236,35 @@ export default function ExploreScreen() {
                 <Image source={{ uri: item.imagenUrl }} style={styles.image} />
               ) : (
                 <View style={styles.imagePlaceholder}>
-                  <Text style={[styles.imagePlaceholderText, { color: textSecondary }]}>
+                  <Text
+                    style={[
+                      styles.imagePlaceholderText,
+                      { color: textSecondary },
+                      font(fontFamily.body),
+                    ]}
+                  >
                     Sin imagen
                   </Text>
                 </View>
               )}
 
               <View style={styles.cardBody}>
-                <Text style={[styles.productName, { color: textPrimary }]}>
+                <Text
+                  style={[
+                    styles.productName,
+                    { color: textPrimary },
+                    font(fontFamily.headingSemi),
+                  ]}
+                >
                   {item.nombre}
                 </Text>
                 <Text
                   numberOfLines={2}
-                  style={[styles.productDescription, { color: textSecondary }]}
+                  style={[
+                    styles.productDescription,
+                    { color: textSecondary },
+                    font(fontFamily.body),
+                  ]}
                 >
                   {item.descripcionCorta}
                 </Text>
@@ -243,6 +275,7 @@ export default function ExploreScreen() {
                       {
                         color: tenant.colorPrimario,
                       },
+                      font(fontFamily.headingBold),
                     ]}
                   >
                     {formatCurrency(item.precio)}
@@ -253,7 +286,9 @@ export default function ExploreScreen() {
                       { backgroundColor: tenant.colorPrimario },
                     ]}
                   >
-                    <Text style={styles.ctaPillText}>{isCitas ? 'Agendar' : 'Pedir'}</Text>
+                    <Text style={[styles.ctaPillText, font(fontFamily.bodyMedium)]}>
+                      {isCitas ? 'Agendar' : 'Pedir'}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -262,28 +297,34 @@ export default function ExploreScreen() {
         )}
       />
       {!isCitas && totalItems > 0 ? (
-        <View style={styles.cartBarWrap}>
-          <BlurView
-            intensity={isDark ? 48 : 30}
-            tint={isDark ? 'dark' : 'light'}
-            style={styles.cartBarBlur}
-          />
+        <View style={[styles.cartBarWrap, { bottom: tabClearance }]}>
+          <BlurView intensity={48} tint="dark" style={styles.cartBarBlur} />
           <View
             style={[
               styles.cartBarOverlay,
               {
-                backgroundColor: isDark
-                  ? 'rgba(46, 16, 101, 0.3)'
-                  : 'rgba(255, 255, 255, 0.65)',
+                backgroundColor: 'rgba(46, 16, 101, 0.3)',
               },
             ]}
           />
           <View style={styles.cartBarContent}>
             <View>
-              <Text style={[styles.cartTitle, { color: textPrimary }]}>
+              <Text
+                style={[
+                  styles.cartTitle,
+                  { color: textPrimary },
+                  font(fontFamily.bodyMedium),
+                ]}
+              >
                 {totalItems} item{totalItems > 1 ? 's' : ''} en carrito
               </Text>
-              <Text style={[styles.cartSubtotal, { color: tenant.colorPrimario }]}>
+              <Text
+                style={[
+                  styles.cartSubtotal,
+                  { color: tenant.colorPrimario },
+                  font(fontFamily.headingBold),
+                ]}
+              >
                 {formatCurrency(subtotal)}
               </Text>
             </View>
@@ -295,7 +336,9 @@ export default function ExploreScreen() {
                   { opacity: pressed ? 0.7 : 1 },
                 ]}
               >
-                <Text style={styles.cartClearText}>Limpiar</Text>
+                <Text style={[styles.cartClearText, font(fontFamily.bodyMedium)]}>
+                  Limpiar
+                </Text>
               </Pressable>
               <Pressable
                 onPress={openCartCheckout}
@@ -307,25 +350,29 @@ export default function ExploreScreen() {
                   },
                 ]}
               >
-                <Text style={styles.cartCheckoutText}>Pedir</Text>
+                <Text style={[styles.cartCheckoutText, font(fontFamily.bodyMedium)]}>
+                  Pedir
+                </Text>
               </Pressable>
             </View>
           </View>
         </View>
       ) : null}
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+  },
   screen: {
     flex: 1,
-    paddingBottom: 120,
   },
   listContent: {
     paddingHorizontal: 20,
     paddingTop: 10,
-    paddingBottom: 130,
     gap: 14,
   },
   headerWrap: {
@@ -341,20 +388,20 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   cardWrap: {
-    borderRadius: 20,
+    borderRadius: 15,
   },
   card: {
     overflow: 'hidden',
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 15,
     ...Platform.select({
       ios: {
-        shadowColor: '#312e81',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.16,
-        shadowRadius: 18,
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.35,
+        shadowRadius: 10,
       },
-      android: { elevation: 7 },
+      android: { elevation: 5 },
       default: {},
     }),
   },
@@ -427,11 +474,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     right: 16,
-    bottom: 110,
-    borderRadius: 18,
+    borderRadius: 15,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.16)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.28,
+        shadowRadius: 8,
+      },
+      android: { elevation: 4 },
+      default: {},
+    }),
   },
   cartBarBlur: {
     ...StyleSheet.absoluteFillObject,
