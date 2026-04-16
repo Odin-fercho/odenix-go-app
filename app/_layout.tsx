@@ -278,7 +278,9 @@ function AppNavigationShell() {
   const splashDone = useRef(false);
 
   useEffect(() => {
-    Appearance.setColorScheme('dark');
+    if (Platform.OS !== 'web') {
+      Appearance.setColorScheme('dark');
+    }
   }, []);
 
   useEffect(() => {
@@ -287,6 +289,11 @@ function AppNavigationShell() {
       splashDone.current = true;
       SplashScreen.hideAsync().catch(() => {});
     };
+
+    if (Platform.OS === 'web') {
+      hide();
+      return;
+    }
 
     if (fontsLoaded) hide();
     const id = setTimeout(hide, SPLASH_MAX_MS);

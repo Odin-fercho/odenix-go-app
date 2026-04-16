@@ -18,7 +18,10 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="theme-color" content="#000000" />
         <style
           dangerouslySetInnerHTML={{
-            __html: `html,body{background:#000000;color-scheme:dark;}body{margin:0;}`,
+            __html: `
+html,body{background:#000000;color-scheme:dark;margin:0;min-height:100%;}
+#root,body>div{background:#000000;min-height:100%;}
+            `.trim(),
           }}
         />
         <meta name="mobile-web-app-capable" content="yes" />
