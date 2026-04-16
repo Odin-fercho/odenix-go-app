@@ -3,19 +3,12 @@ import 'react-native-reanimated';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { BlurView } from 'expo-blur';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useRef } from 'react';
-import {
-  Appearance,
-  Dimensions,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Dimensions, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -54,6 +47,20 @@ const shell = {
   glassOverlay: 'rgba(46, 16, 101, 0.22)',
   tabBorder: 'rgba(255, 255, 255, 0.1)',
 } as const;
+
+/** Tema React Navigation (web + nativo): fondo y superficies oscuras fijas. */
+const navigationTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    primary: brand.primary,
+    background: APP_BACKGROUND,
+    card: APP_BACKGROUND,
+    text: shell.text,
+    border: 'rgba(255, 255, 255, 0.08)',
+    notification: brand.accent,
+  },
+};
 
 /** Rutas con pestaña visible (evita pantallas colgadas por carpetas bajo `app/`). */
 const TAB_ROUTE_WHITELIST = new Set(['index', 'explore', 'profile']);
@@ -278,12 +285,6 @@ function AppNavigationShell() {
   const splashDone = useRef(false);
 
   useEffect(() => {
-    if (Platform.OS !== 'web') {
-      Appearance.setColorScheme('dark');
-    }
-  }, []);
-
-  useEffect(() => {
     const hide = () => {
       if (splashDone.current) return;
       splashDone.current = true;
@@ -352,11 +353,13 @@ export default function RootLayout() {
     <GestureHandlerRootView
       style={[styles.gestureRoot, { backgroundColor: APP_BACKGROUND }]}
     >
-      <TenantProvider>
-        <CartProvider>
-          <AppNavigationShell />
-        </CartProvider>
-      </TenantProvider>
+      <ThemeProvider value={navigationTheme}>
+        <TenantProvider>
+          <CartProvider>
+            <AppNavigationShell />
+          </CartProvider>
+        </TenantProvider>
+      </ThemeProvider>
     </GestureHandlerRootView>
   );
 }
